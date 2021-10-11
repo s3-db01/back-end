@@ -1,4 +1,5 @@
 const express = require("express");
+const db = require("./app/models");
 const cors = require("cors");
 
 const app = express();
@@ -15,10 +16,11 @@ app.use(express.json());
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
 
-// simple route
-app.get("/", (req, res) => {
-  res.json({ message: "Welcome to bezkoder application." });
+db.sequelize.sync({ force: true }).then(() => {
+  console.log("Drop and re-sync db.");
 });
+
+require("./app/routes/temperaturesensor.routes.js")(app);
 
 // set port, listen for requests
 const PORT = process.env.PORT || 3000;
